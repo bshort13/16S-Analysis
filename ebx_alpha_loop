@@ -1,0 +1,44 @@
+ebx_alpha <- function(meta,otus){
+  ###Adds alpha diversity measurements to a metadata data frame
+  require(vegan)
+  shan_temp <- rep(0, length(meta[,1]))
+  obs_temp <- rep(0, length(meta[,1]))
+  simp_temp <- rep(0, length(meta[,1]))
+  chao_temp <- rep(0, length(meta[,1]))
+  seeds<- 1:100
+  #set.seed(123)
+  for(i in seeds){
+    print(i)
+    t<- as.data.frame(t(otus))
+    rare<-min(rowSums(t))
+    set.seed(i)
+    t<- as.data.frame(rrarefy(t,rare))
+    t<-as.data.frame(t(t))
+    
+    
+    #rarefy 100 times to get mean diversity and evenness
+    obs_temp2<-colSums(otus > 0) #count the number of otus in each sample with 1 or more counts
+    obs_temp <- obs_temp + obs_temp2    
+    
+    t<-as.data.frame(t(t))
+    
+    chao_temp2<- estimateR(t, index = "chao")[2,] #chao1 estimate
+    chao_temp <- chao_temp + chao_temp2
+    
+    t_hel <- decostand(t, method = "hellinger")
+
+    shan_temp2 <- vegan::diversity(t_hel, index = "shannon")
+    shan_temp <- shan_temp + shan_temp2
+    
+    simp_temp2 <- vegan::diversity(t_hel, index = "simpson")
+    simp_temp <- simp_temp + simp_temp2
+
+  }
+  meta$Observed <- obs_temp/100
+  meta$Shannon <- shan_temp/100
+  meta$Simpson <- simp_temp/100
+  meta$Chao1 <- chao_temp/100
+  
+  meta
+  
+}
