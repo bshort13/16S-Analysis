@@ -1,0 +1,19 @@
+library(geomtextpath)
+library(ggplot2)
+
+meta_filt<- meta %>% filter(Viability=="Live")#optional filter
+
+p1<-meta_filt %>%
+  ggplot(aes(x= , y= ,color=)) +#y variable should be changed depending on index
+  geom_boxplot(position = "dodge") + geom_point(position = position_jitterdodge(jitter.width = 0)) +
+  theme_classic()+ ylim(0,5)+#ylim changed depending on metric but always starts at 0
+  geom_texthline(aes(yintercept=3.73, label = "3.73",hjust = 0.02), lty = 2, colour= 'black') +#values depending on sample type. Additional details found in SPEC_001_01
+  theme(legend.position = "right")+
+  scale_color_manual(values = colours)+
+  xlab("") + ylab("Shannon's Diversity Index")+#adapt ylab for diversity index of choice
+  stat_pwc(data = meta_filt, method = "", label = "p.signif", hide.ns =T,step.increase = 0.25)+
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5, hjust=0.5), text = element_text(size=20))
+
+# change file name and graph object depending on what graph you would like to save. 
+#height and width can be changed depending on the graph size
+ggsave("Z:/Shared/RESEARCH & DEVELOPMENT; ANALYTICAL DEVELOPMENT/EBX R&D PROJECTS 2025/Experiments and Results/QC_Stability/PRO-QC-10/Bulk DP Investigation/Figures/AD_BP_ambient_live_r&d.jpeg",p1, height = 7, width = 9)
