@@ -1,0 +1,26 @@
+meta_filt<- meta %>% filter(Viability=="Live") #filter for viable sampels in the metadata
+OTU_filt<-OTUs$OTUs.CLR[, names(OTUs$OTUs.CLR) %in% meta_filt$Sample_ID]#remove any non'viable samples from the otu table
+
+otu_t<-t(OTU_filt) %>% as.data.frame()
+
+dist_bd <- as.matrix(vegdist(otu_t, method = "euclidean"))
+
+distance<-dist_to_centroids(dist_bd, meta_filt$)#choose the variable you want to measure all distances for
+distance<-left_join(distance,meta_filt,by=c("Item"="Sample_ID"))#join metadata to the distance table
+distance<-distance %>% filter(CentroidGroup=="")#filter the centroid groups to select for the baseline/comparitor group
+
+write.csv(distance, "")
+
+distplot<- distance %>%
+  ggplot(aes(x = , y = CentroidDistance,color=)) +
+  geom_boxplot(position = "identity") + geom_point(position = position_jitterdodge(jitter.width = 0)) +
+  #ylim(0,0.2)+
+  theme_classic()+
+  theme(legend.position = "none")+
+  xlab("") + ylab("Distance to Baseline Centroid")+
+  stat_pwc(data = distance, method = "", label = "p.value", hide.ns =T)+
+  scale_color_manual(values="#1f78b4") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1), text = element_text(size=20))
+
+
+ggsave("",distplot, height = 9, width = 7)
