@@ -1,0 +1,33 @@
+OTU_tables<-list()
+library(ConQuR)
+library(MicrobeR)
+library(vegan)
+library(foreach)
+library(zCompositions)
+
+OTUs[is.na(OTUs)] <- 0 #replace NA with 0 
+
+#apply confidence filter
+OTUs.filt<-Confidence.Filter(OTUs,3,10)%>%as.data.frame()#remove any otu that doesnt appear in at least 3 samples with a total of at least 10 counts
+
+OTUs.CZM<-zCompositions::cmultRepl(t(OTUs.filt), label=0, method="CZM", output="prop",
+                                   z.delete = FALSE, suppress.print=TRUE) %>%
+                                   t() %>% as.data.frame()#convert raw counts of filtered table to proportions
+
+if (all(abs(colSums(OTUs.CZM)-1) < 1e-10)) {
+  print("Success")
+} else {
+  print("Normalisation failed: not all columns sum to 1")
+} #check all columns add up to 1 to confirm normalisation worked
+
+OTUs.CLR<- Make.CLR(OTUs.CZM) %>% as.data.frame()
+
+
+OTU_tables$OTUs<-OTUs
+OTU_tables$OTUs.filt<-OTUs.filt
+OTU_tables$OTUs.CZM<-OTUs.CZM
+OTU_tables$OTUs.CLR<-OTUs.CLR
+
+saveRDS(OTU_tables, "")
+
+
