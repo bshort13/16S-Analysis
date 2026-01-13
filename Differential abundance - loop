@@ -1,0 +1,32 @@
+library(maaslin3)
+library(tidyverse)
+
+#for use when large datasets should be stratified before differential abundance analysis eg. stratifying stability studies by storage temp
+
+OTUs<- readRDS("/OTU_object.RDS")
+meta<- read.csv("",row.names = 1)
+meta_filt<- meta %>% filter(Viability=="Live")
+
+otu<- OTUs$OTUs.filt[, names(OTUs$OTUs.filt) %in% meta_filt$Sample_ID]#remove any samples from OTU table that aren't in the metadata table
+
+#ensure variables of interest are factors with the reference/baseline as the first level
+
+list<- c("","")#create a list of each stratification variable
+for (sample in list) {
+  meta_temp<- meta_filt %>% filter(Temperature == sample)#select for individual strata
+  otu_temp<- OTUs$OTUs.filt[, names(OTUs$OTUs.filt) %in% meta_temp$Sample_ID]
+  output_dir<- ""
+  file_name <- paste0(sample, "")#set the name of the folder where the results should be saved. NOTE: maaslin creates this folder
+  file_path <- file.path(output_dir, file_name)#provide full file path for where the results will be saved
+#loop the maaslin outputs
+#specify different normalisations/transforms. TSS normalisation and LOG transformation is recommended
+  maaslin3_out <- maaslin3(input_data =  otu_temp,
+                         input_metadata = meta_temp,
+                         normalization = "TSS",
+                         transform = "LOG",
+                         formula = "",#give in the format of ~ variables+of+interest
+                         output = file_path,
+                         verbosity = "WARN"
+                         )
+
+}
