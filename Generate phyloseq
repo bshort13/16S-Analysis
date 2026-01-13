@@ -1,0 +1,25 @@
+library(phyloseq)
+
+#create physeq object - confidence filt
+tax<-as.data.frame(rownames(OTUs$OTUs.filt))#create a new taxonomy table with the genus names from the tidied OTU table made above
+names(tax)[names(tax) == "rownames(OTUs$OTUs.filt)"] <- "Genus"#name the column of the new tax table as 'Genus'
+rownames(tax)<- tax$Genus#also make the rownames the genus names
+sampledata<- sample_data(data.frame(meta,stringsAsFactors = FALSE))#format metadata table to be compatible with phyloseq package
+OTU<-otu_table(OTUs$OTUs.filt,taxa_are_rows = TRUE)#format OTU table to be compatible with phyloseq package
+TAX = phyloseq::tax_table(as.matrix(tax))#format taxonomy table to be compatible with phyloseq package
+
+physeq<-phyloseq(OTU,sampledata,TAX)#merge OTU, metadata and taxonomy tables into one large data object
+
+saveRDS(physeq, "/phyloseq_filt.RDS")
+
+#create physeq object - CLR
+tax<-as.data.frame(rownames(OTUs$OTUs.CLR))#create a new taxonomy table with the genus names from the tidied OTU table made above
+names(tax)[names(tax) == "rownames(OTUs$OTUs.CLR)"] <- "Genus"#name the column of the new tax table as 'Genus'
+rownames(tax)<- tax$Genus#also make the rownames the genus names
+sampledata<- sample_data(data.frame(meta,stringsAsFactors = FALSE))#format metadata table to be compatible with phyloseq package
+OTU<-otu_table(OTUs$OTUs.CLR,taxa_are_rows = TRUE)#format OTU table to be compatible with phyloseq package
+TAX = phyloseq::tax_table(as.matrix(tax))#format taxonomy table to be compatible with phyloseq package
+
+physeq<-phyloseq(OTU,sampledata,TAX)#merge OTU, metadata and taxonomy tables into one large data object
+
+saveRDS(physeq, "/phyloseq_CLR.RDS")
