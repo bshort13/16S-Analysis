@@ -1,0 +1,25 @@
+physeq<-readRDS("/phyloseq_CLR.RDS")
+
+#optional filtering step
+ps <- ps_filter(physeq, Viability != "Total", .keep_all_taxa = TRUE)
+
+clr_matrix <- t(otu_table(ps))  #extract the OTU table from the phyloseq object and transpose it so the samples are rows
+pca <- prcomp(clr_matrix, center = TRUE, scale. = FALSE)#calculate principle components of the transposed OTU table. This always uses Euclidean distance
+
+sample_df <- as.data.frame(sample_data(ps))# Extract sample metadata from the phyloseq object for plotting
+sample_df$PC1 <- pca$x[,1]#add coordinates for principle component 1 from the pca object above to the sample dataframe
+sample_df$PC2 <- pca$x[,2]#add coordinates for principle component 2 from the pca object above to the sample dataframe
+
+#create plot using the extracted coordinates
+#variables such as datapoint colour can be altered as desired
+ord_plot<-ggplot(sample_df, aes(x = PC1, y = PC2, colour = , shape = )) +
+  geom_point(size = 4) +
+  scale_color_manual(values = colours)+
+  labs(
+       x = paste0("PC1 (", round(summary(pca)$importance[2,1]*100, 1), "%)"),
+       y = paste0("PC2 (", round(summary(pca)$importance[2,2]*100, 1), "%)"))+ 
+  geom_point(size=4) + theme(text = element_text(size = 20)) + scale_fill_manual(,values = colours)
+  stat_ellipse(aes(group = , color=), type = "t", level = 0.95)#optional addition of elipses based on variables
+ord_plot
+
+ggsave("",ord_plot, height = 7, width = 13)
