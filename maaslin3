@@ -1,0 +1,19 @@
+OTUs<- readRDS("/OTU_object.RDS")
+meta<- read.csv("",row.names = 1)
+
+meta_filt<- meta %>% filter(Viability=="Live")#optional but recommended filtering step
+
+rownames(meta_filt)<- meta_filt$Sample_ID#ensure rown
+#turn contents of any variables of interest into factors with the first being the baseline/reference group
+otu<- OTUs$OTUs.filt[, names(OTUs$OTUs.filt) %in% meta_filt$Sample_ID]#remove any samples from OTU table that aren't in the metadata table
+
+#can specify different normalisations/transforms but recommended is TSS normalisation and LOG transformation
+maaslin3_out <- maaslin3(input_data =  otu,
+                         input_metadata = meta_filt,
+                         normalization = "TSS",
+                         transform = "LOG",
+                         formula = "", #provide in the format ~ variables+of+interest
+                         output = "",#file path to where outputs should be saved
+                         verbosity = "WARN"
+                         )
+
