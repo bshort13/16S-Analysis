@@ -1,0 +1,13 @@
+library(MicrobiotaProcess)
+library(microViz)
+library(UpSetR)
+library(phyloseq)
+library(ComplexUpset)
+
+physeq<- readRDS("")#provide file path to phyloseq object created in the phyloseq script
+upsetda <- get_upset(obj=physeq, factorNames="")#provide metadata variable that should be used to identify shared features across
+
+samples<-colnames(upsetda)#this sets the samples across which the shared features should be counted
+#create plot
+p<-ComplexUpset::upset(upsetda,samples, name="", set_sizes = FALSE, min_size=10)
+ggsave("",p, height = 7, width = 5)
