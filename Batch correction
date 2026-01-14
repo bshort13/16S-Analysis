@@ -1,0 +1,37 @@
+library(ConQuR)
+library(MicrobeR)
+library(vegan)
+library(foreach)
+library(zCompositions)
+OTUs[is.na(OTUs)] <- 0 #replace NA with 0 
+
+#apply confidence filter
+OTUs.filt<-Confidence.Filter(OTUs,3,10)%>%as.data.frame()#remove any otu that doesnt appear in at least 3 samples with a total of at least 10 counts
+
+
+batchid = meta[, '']#assign metadata variable that contains info that separates data by batches. NOTE this should be a factor
+
+otu_t<-as.data.frame(t(OTUs.filt))#transpose OTU table so samples are rows
+#use ConQuR to correct for batch effects. libsize accounts for library size too
+OTUs.batchcorrect<- ConQuR_libsize(otu_t, batchid, covariates = meta[, c("")], batch_ref = "") %>% as.data.frame()
+
+OTUs.batchcorrect<- as.data.frame(t(OTUs.batchcorrect))#transpose OTU table so samples are rows
+
+OTUs.CZM<-zCompositions::cmultRepl(t(OTUs.batchcorrect), label=0, method="CZM", output="prop",
+                                   z.delete = FALSE, suppress.print=TRUE) %>%
+                                   t() %>% as.data.frame()#convert raw counts of filtered table to proportions
+
+if (all(abs(colSums(OTUs.CZM)-1) < 1e-10)) {
+  print("Success")
+} else {
+  print("Normalisation failed: not all columns sum to 1")
+} #check all columns add up to 1 to confirm normalisation worked
+
+OTUs.CLR<- Make.CLR(OTUs.CZM) %>% as.data.frame()
+
+
+OTU_tables$OTUs<-OTUs
+OTU_tables$OTUs.filt<-OTUs.filt
+OTU_tables$OTUs.batchcorrect<-OTUs.batchcorrect
+OTU_tables$OTUs.CZM<-OTUs.CZM
+OTU_tables$OTUs.CLR<-OTUs.CLR
