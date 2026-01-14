@@ -1,0 +1,82 @@
+#pals
+install.packages("pals")
+#tidyverse
+install.packages("tidyverse")
+#ggpubr
+install.packages("ggpubr")
+#lme4
+install.packages("lme4")
+#plyr
+install.packages("plyr")
+#dplyr
+install.packages("dplyr")
+#philr
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("philr",force = TRUE)
+#DECHIPHER
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("DECIPHER", force = TRUE)
+#phyloseq
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("phyloseq",force = TRUE)
+#microbiome
+library(BiocManager)
+BiocManager::install("microbiome") #may need to install some dependancy packages
+#vegan
+install.packages("remotes")
+remotes::install_github("vegandevs/vegan") #may need to install some dependancy packages
+install.packages("vegan")#use for version 4.5.0 and later
+#deseq2
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("DESeq2")
+#ggplot2
+install.packages("ggplot2")
+#microber
+install.packages("remotes")
+remotes::install_github("jbisanz/MicrobeR")#may need to install some dependancy packages
+#metagenomeseq
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("metagenomeSeq")#may need to install some dependancy packages
+#BiocGenerics
+if (!require("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+BiocManager::install("BiocGenerics",force = TRUE)
+#betapart
+install.packages('betapart')
+#usedist
+install.packages('usedist')
+#MicroViz
+remotes::install_github("david-barnett/microViz", force = TRUE)
+#maaslin3
+BiocManager::install("biobakery/maaslin3")
+#pretty heatmaps
+install.packages("pheatmap")
+#enhanced volcano
+BiocManager::install("EnhancedVolcano")
+#clusterprofiler
+BiocManager::install("clusterProfiler")
+#dysbiosisR
+install.packages("devtools")
+devtools::install_github("microsud/dysbiosisR")
+#lefser
+BiocManager::install("lefser")
+#microbiomemarker
+BiocManager::install("microbiomeMarker", force = TRUE)
+remotes::install_github("yiluheihei/microbiomeMarker")
+#microbiotaProcess
+BiocManager::install("MicrobiotaProcess")
+#biomutils
+devtools::install_github("RIVM-IIV-Microbiome/biomeUtils", force = TRUE)
+#enrichplot
+BiocManager::install("enrichplot",force = TRUE)
+#ggpicrust2
+devtools::install_github("cafferychen777/ggpicrust2")
+#microbiomestat
+devtools::install_github("cafferychen777/MicrobiomeStat", force = TRUE)
+#conqur
+devtools::install_github("wdl2459/ConQuR")
