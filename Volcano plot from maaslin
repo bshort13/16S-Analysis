@@ -1,0 +1,32 @@
+library(tidyverse)
+library(ggplot2)
+library(data.table)
+library(readr)
+library(ggrepel)
+
+results <- fread("")
+
+res_df <- results%>%
+  mutate(Significant = ifelse(qval_joint < 0.05 & abs(coef) > 1.5, "Yes", "No")) %>%#cuttoffs can be changes for valid alternatives
+  drop_na(pval_individual)
+
+#optional to add in step to order 'Value' or the results table
+
+p<- res_df %>% ggplot(aes(x = coef, y = -log10(qval_joint))) +
+  geom_point(data = subset(res_df, Significant == "No"),color = "grey70",alpha = 0.7,size = 3,show.legend = FALSE)+
+  geom_point(data = subset(res_df, Significant == "Yes"),aes(color = value),size = 3) +
+  #geom_point(alpha = 0.7, color = "grey70") +
+  scale_color_manual("",values = colours) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "black") +
+  geom_vline(xintercept = c(-1.5, 1.5), linetype = "dashed", color = "black") +
+  geom_text_repel(data = res_df,
+                  aes(label = feature),
+                  max.overlaps = 7,
+                  size = 3.5) +
+  labs(x = "log2 Fold Change",
+       y = "-log10(adj Pvalue)") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1), text = element_text(size=20))+
+  theme_minimal(base_size = 14) +
+  labs(color="Sample")
+
+ggsave("",p,height = 10,width = 20)
