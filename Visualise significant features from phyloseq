@@ -1,0 +1,38 @@
+library(readr)
+library(data.table)
+library(ggrepel)
+library(ggpubr)
+library(microViz)
+
+physeq<- readRDS("")
+
+ps <- ps_filter(ps, Viability == "Live", .keep_all_taxa = TRUE)#optional but recommended filtering step
+physeq_trans = transform_sample_counts(ps1, function(OTU) OTU/sum(OTU))
+#convert phyloseq object to dataframe
+physeq_dataframe <- psmelt(physeq_trans)
+
+results <- fread("")#read in table from maaslin
+  
+res_df <- results%>%
+  mutate(Significant = ifelse(qval_joint < 0.05 & abs(coef) > 1.5, "Yes", "No")) %>%
+  drop_na(pval_individual)
+res_sig_df<- res_df %>% filter(Significant=="Yes")
+  
+psd<- physeq_dataframe %>% filter(OTU %in% res_sig_df$feature)
+
+colours<- distinct_palette()
+p<- psd%>% 
+  ggplot(aes(factor(OTU), y= Abundance, fill =)) + geom_boxplot(position = "dodge") + geom_point(position = position_jitterdodge(jitter.width = 0))+
+  xlab("")+ ylab("Relative Abundance")+
+  scale_y_continuous(labels = scales::percent)+
+  scale_fill_manual(values = colours)+
+  guides(fill=guide_legend("Sample"))+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5), text = element_text(size=17))+
+  theme(strip.text = element_blank())+
+  theme(legend.position = "right")+
+  facet_wrap(~OTU, scales="free", nrow=2)#optional facet option. to include this add a '+' to the line above
+file_path<-"Z:/Shared/RESEARCH & DEVELOPMENT; ANALYTICAL DEVELOPMENT/EBX R&D PROJECTS 2025/Experiments and Results/QC_Stability/PRO_000831/T24M/Batch Correction Analysis/Figures/maaslin/Figures/"
+file_name<- paste0(file_path,storage,"_boxplot_from_volcan_0.1.jpeg")
+ggsave(file_name,p,height = 10,width = 20)
+
