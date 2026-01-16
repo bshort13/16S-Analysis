@@ -1,0 +1,8 @@
+detach("package:plyr")#only required if plyr has been loaded prior to running this code
+meta_AD<- meta %>% filter(Viability=="Live") %>%
+  group_by() %>% #select variables of interest
+  summarize(shannonmean=mean(Shannon),
+            simpsonmean=mean(Simpson),
+            obsmean=mean(Observed),
+            chaomean=mean(Chao1))
+write.csv(meta_AD, "")
