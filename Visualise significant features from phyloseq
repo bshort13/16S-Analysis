@@ -32,7 +32,6 @@ p<- psd%>%
   theme(strip.text = element_blank())+
   theme(legend.position = "right")+
   facet_wrap(~OTU, scales="free", nrow=2)#optional facet option. to include this add a '+' to the line above
-file_path<-"Z:/Shared/RESEARCH & DEVELOPMENT; ANALYTICAL DEVELOPMENT/EBX R&D PROJECTS 2025/Experiments and Results/QC_Stability/PRO_000831/T24M/Batch Correction Analysis/Figures/maaslin/Figures/"
-file_name<- paste0(file_path,storage,"_boxplot_from_volcan_0.1.jpeg")
-ggsave(file_name,p,height = 10,width = 20)
+
+ggsave("",p,height = 10,width = 20)
 
