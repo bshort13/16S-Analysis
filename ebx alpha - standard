@@ -1,0 +1,22 @@
+ebx_alpha <- function(meta,otus){
+  
+  ###Adds alpha diversity measurements to a metadata data frame
+  
+  require(vegan)
+  observed<-colSums(otus > 0) %>% as.data.frame()#count the number of otus in each sample with 1 or more counts
+  names(observed)[names(observed) == "."] <- "Observed"#name the column of the new tax table as 'Genus'
+  #join observed otu table with metadata
+  observed$Sample_ID<-rownames(observed)
+  meta<-left_join(meta,observed)
+  rownames(meta)<-meta$Sample_ID
+  t<-as.data.frame(t(otus))
+  #chao1 estimate - needs singletons so can't be calculated on transformed data
+  meta$Chao1 <- estimateR(t, index = "chao")[2,] #chao1 estimate
+  #hellinger transformation to replicate baseclear
+  t <- decostand(t, method = "hellinger")
+  meta$Shannon<-vegan::diversity(t, index = "shannon")
+  meta$Simpson<-vegan::diversity(t, index = "simpson")
+  
+  meta
+  
+}
