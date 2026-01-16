@@ -1,0 +1,8 @@
+detach("package:plyr")#only required if plyr has been loaded previously
+abundance_summary<- physeq_dataframe %>% filter(OTU %in% tt$OTU) %>%
+  group_by(OTU,) %>% #include other grouping variables
+  summarize(mean=mean(Abundance))
+abundance_summary$mean<- abundance_summary$mean * 100 #convert data from proportions to percentages
+abundance_summary <- pivot_wider(abundance_summary, names_from = OTU, values_from = mean)
+
+write.csv(abundance_summary, "")
